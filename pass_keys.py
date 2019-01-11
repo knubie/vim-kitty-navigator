@@ -19,7 +19,7 @@ def handle_result(args, result, target_window_id, boss):
     if w is None:
         return
 
-    if w.child.cmdline == "vim":
+    if w.screen.is_main_linebuf():
         getattr(tab, args[1])(args[2])
         return
 

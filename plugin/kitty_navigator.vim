@@ -31,7 +31,7 @@ if !exists("g:kitty_navigator_listening_on_address")
 endif
 
 function! s:KittyCommand(args)
-  let cmd = 'kitty @ --to ' . g:kitty_navigator_listening_on_address . a:args
+  let cmd = 'kitty @ --to ' . g:kitty_navigator_listening_on_address . ' ' . a:args
   return system(cmd)
 endfunction
 

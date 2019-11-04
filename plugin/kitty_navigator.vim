@@ -26,12 +26,8 @@ command! KittyNavigateDown     call s:KittyAwareNavigate('j')
 command! KittyNavigateUp       call s:KittyAwareNavigate('k')
 command! KittyNavigateRight    call s:KittyAwareNavigate('l')
 
-if !exists("g:kitty_navigator_listening_on_address")
-  let g:kitty_navigator_listening_on_address = 'unix:/tmp/mykitty'
-endif
-
 function! s:KittyCommand(args)
-  let cmd = 'kitty @ --to ' . g:kitty_navigator_listening_on_address . ' ' . a:args
+  let cmd = 'kitty @ ' . a:args
   return system(cmd)
 endfunction
 

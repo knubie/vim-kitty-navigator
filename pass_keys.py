@@ -25,7 +25,7 @@ def handle_result(args, result, target_window_id, boss):
             getattr(tab, args[1])(args[2])
             return
     else:
-        if w.screen.is_main_linebuf():
+        if not re.search("n?vim", w.title):
             getattr(tab, args[1])(args[2])
             return
 

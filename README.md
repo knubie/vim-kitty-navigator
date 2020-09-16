@@ -60,6 +60,22 @@ map ctrl+h kitten pass_keys.py neighboring_window left   ctrl+h
 map ctrl+l kitten pass_keys.py neighboring_window right  ctrl+l
 ```
 
+`vim-kitty-navigator` uses the window title to detect when it is in a (neo)vim session or not, so if you have a non-standard title set for vim, for example using
+
+```viml
+set title
+let &titlestring='%t - nvim'
+```
+
+You can set fourth optional regex argument to the `pass_keys.py` call in your `kitty.conf` file to match the title.
+
+```conf
+map ctrl+j kitten pass_keys.py neighboring_window bottom ctrl+j "^.* - nvim$"
+map ctrl+k kitten pass_keys.py neighboring_window top    ctrl+k "^.* - nvim$"
+map ctrl+h kitten pass_keys.py neighboring_window left   ctrl+h "^.* - nvim$"
+map ctrl+l kitten pass_keys.py neighboring_window right  ctrl+l "^.* - nvim$"
+```
+
 #### Make kitty listen to control messages
 
 Start kitty with the `listen_on` option so that vim can send commands to it.

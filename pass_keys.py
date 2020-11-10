@@ -31,7 +31,7 @@ def handle_result(args, result, target_window_id, boss):
 
     mods, key, is_text = ku.parse_kittens_shortcut(args[3])
     if is_text:
-        w.send_text(key)
+        w.send_text("all", key)
         return
 
     extended = w.screen.extended_keyboard

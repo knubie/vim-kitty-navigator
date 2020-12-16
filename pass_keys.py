@@ -7,42 +7,57 @@ import re
 def main():
     pass
 
-
 def actions(extended):
     yield keys.defines.GLFW_PRESS
     if extended:
         yield keys.defines.GLFW_RELEASE
 
+def convert_mods(mods):
+    """
+    converts key_encoding.py style mods to glfw style mods as required by key_to_bytes
+    """
+    glfw_mods = 0
+    if mods & ke.SHIFT:
+        glfw_mods |= keys.defines.GLFW_MOD_SHIFT
+    if mods & ke.ALT:
+        glfw_mods |= keys.defines.GLFW_MOD_ALT
+    if mods & ke.CTRL:
+        glfw_mods |= keys.defines.GLFW_MOD_CONTROL
+    if mods & ke.SUPER:
+        glfw_mods |= keys.defines.GLFW_MOD_SUPER
+    return glfw_mods
+
 
 def handle_result(args, result, target_window_id, boss):
     w = boss.window_id_map.get(target_window_id)
     tab = boss.active_tab
+
     if w is None:
         return
 
+# 
     if len(args) > 4:
         if not re.search(args[4], w.title):
-            getattr(tab, args[1])(args[2])
+            boss.active_tab.neighboring_window(args[2])
             return
     else:
         if not re.search("n?vim", w.title):
-            getattr(tab, args[1])(args[2])
+            boss.active_tab.neighboring_window(args[2])
             return
 
     mods, key, is_text = ku.parse_kittens_shortcut(args[3])
-    if is_text:
-        w.send_text(key)
-        return
 
     extended = w.screen.extended_keyboard
+
     for action in actions(extended):
         sequence = (
             ('\x1b_{}\x1b\\' if extended else '{}')
             .format(
                 keys.key_to_bytes(
-                    getattr(keys.defines, 'GLFW_KEY_{}'.format(key)),
-                    w.screen.cursor_key_mode, extended, mods, action)
+                    getattr(keys.defines, 'GLFW_KEY_{}'.format(key.upper())),
+                    w.screen.cursor_key_mode, extended, convert_mods(mods), action)
                 .decode('ascii')))
+        print(repr(sequence))
         w.write_to_child(sequence)
 
 

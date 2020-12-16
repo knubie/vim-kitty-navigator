@@ -25,20 +25,20 @@ Installation
 
 ### Vim
 
-If you don't have a preferred installation method, I recommend using [Vundle][].
-Assuming you have Vundle installed and configured, the following steps will
+If you don't have a preferred installation method, I recommend using [vim-plug](https://github.com/junegunn/vim-plug).
+Assuming you have `vim-plug` installed and configured, the following steps will
 install the plugin:
 
 Add the following line to your `~/.vimrc` file
 
 ``` vim
-Plugin 'knubie/vim-kitty-navigator'
+Plug 'knubie/vim-kitty-navigator'
 ```
 
 Then run
 
 ```
-:PluginInstall
+:PlugInstall
 ```
 
 ### kitty

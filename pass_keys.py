@@ -41,7 +41,7 @@ def handle_result(args, result, target_window_id, boss):
             boss.active_tab.neighboring_window(args[2])
             return
     else:
-        if not re.search("n?vim", w.title):
+        if not re.search("n?vim", w.title, re.I):
             boss.active_tab.neighboring_window(args[2])
             return
 

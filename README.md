@@ -81,10 +81,10 @@ map ctrl+l kitten pass_keys.py neighboring_window right  ctrl+l "^.* - nvim$"
 Start kitty with the `listen_on` option so that vim can send commands to it.
 
 ```
-kitty -o allow_remote_control=yes --listen-on unix:/tmp/mykitty
+kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty
 ```
 
-The listening address can be customized in your vimrc by setting `g:kitty_navigator_listening_on_address`. It defaults to `unix:/tmp/mykitty`.
+The listening address can be customized in your vimrc by setting `g:kitty_navigator_listening_on_address`. It defaults to `unix:@mykitty`.
 
 Configuration
 -------------

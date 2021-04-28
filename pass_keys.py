@@ -35,13 +35,14 @@ def handle_result(args, result, target_window_id, boss):
     if w is None:
         return
 
-# 
     if len(args) > 4:
         if not re.search(args[4], w.title):
             boss.active_tab.neighboring_window(args[2])
             return
     else:
-        if not re.search("n?vim", w.title, re.I):
+        # check the first word of the first foreground process
+        foreground_process = w.child.foreground_processes[0]['cmdline'][0]
+        if not re.search("n?vim", foreground_process, re.I):
             boss.active_tab.neighboring_window(args[2])
             return
 

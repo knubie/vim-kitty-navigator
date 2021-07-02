@@ -17,7 +17,7 @@ Vim panes and kitty splits seamlessly.
 - `<ctrl-k>` => Up
 - `<ctrl-l>` => Right
 
-If you want to use alternate key mappings, see the [configuration sectionbelow](https://github.com/knubie/vim-kitty-navigator#custom-key-bindings).
+If you want to use alternate key mappings, see the [configuration section below](https://github.com/knubie/vim-kitty-navigator#custom-key-bindings).
 
 Installation
 ------------

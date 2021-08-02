@@ -46,7 +46,7 @@ To configure the kitty side of this customization there are three parts:
 
 #### Add `pass_keys.py` and `neighboring_window.py` kittens
 
-Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/`.
+Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/`. The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `neighboring_window.py` kitten is used to send the `neighboring_window` command (e.g. `kitten @ neighboring_window.py right`) from vim when you've reached the last pane and are ready to switch to a non-vim kitty window.
 
 #### Add this snippet to kitty.conf
 
@@ -59,14 +59,7 @@ map ctrl+h kitten pass_keys.py neighboring_window left   ctrl+h
 map ctrl+l kitten pass_keys.py neighboring_window right  ctrl+l
 ```
 
-`vim-kitty-navigator` uses the window title to detect when it is in a (neo)vim session or not, so if you have a non-standard title set for vim, for example using
-
-```viml
-set title
-let &titlestring='%t - nvim'
-```
-
-You can set fourth optional regex argument to the `pass_keys.py` call in your `kitty.conf` file to match the title.
+By default `vim-kitty-navigator` uses the name of the current foreground process to detect when it is in a (neo)vim session or not. If that doesn't work, (or if you want to support applications other than vim) you can supply a fourth optional argument to the `pass_keys.py` call in your `kitty.conf` file to match the process name. 
 
 ```conf
 map ctrl+j kitten pass_keys.py neighboring_window bottom ctrl+j "^.* - nvim$"
@@ -80,14 +73,12 @@ map ctrl+l kitten pass_keys.py neighboring_window right  ctrl+l "^.* - nvim$"
 Start kitty with the `listen-on` option so that vim can send commands to it.
 
 ```
-# For linux:
+# For linux only:
 kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty
 
 # Other unix systems:
 kitty -o allow_remote_control=yes --single-instance --listen-on unix:/tmp/mykitty
 ```
-
-The listening address can be customized in your vimrc by setting `g:kitty_navigator_listening_on_address`. It defaults to `unix:@mykitty`.
 
 Configuration
 -------------

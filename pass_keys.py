@@ -31,22 +31,26 @@ def convert_mods(mods):
 def handle_result(args, result, target_window_id, boss):
     w = boss.window_id_map.get(target_window_id)
     tab = boss.active_tab
+    # The direciton to move to, e.g. top, right, bottom, left
+    direction = args[2]
+    # a key mapping, e.g. "ctrl+h"
+    key_mapping = args[3] 
+    # The regular expresion to use to match against the process name.
+    # This can be changes by passing a fourth argument to pass_keys.py
+    # in your kitty.conf file.
+    process_name = args[4] if len(args) > 4 else "n?vim"
 
     if w is None:
         return
 
-    if len(args) > 4:
-        if not re.search(args[4], w.title):
-            boss.active_tab.neighboring_window(args[2])
-            return
     else:
-        # check the first word of the first foreground process
-        foreground_process = w.child.foreground_processes[0]['cmdline'][0]
-        if not re.search("n?vim", foreground_process, re.I):
-            boss.active_tab.neighboring_window(args[2])
+        fp = w.child.foreground_processes
+        # check the first word of the each foreground process
+        if not any(re.search(process_name, p['cmdline'][0], re.I) for p in fp):
+            boss.active_tab.neighboring_window(direction)
             return
 
-    mods, key, is_text = ku.parse_kittens_shortcut(args[3])
+    mods, key, is_text = ku.parse_kittens_shortcut(key_mapping)
 
     extended = w.screen.extended_keyboard
 

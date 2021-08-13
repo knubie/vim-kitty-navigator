@@ -46,7 +46,12 @@ To configure the kitty side of this customization there are three parts:
 
 #### Add `pass_keys.py` and `neighboring_window.py` kittens
 
-Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/`. The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `neighboring_window.py` kitten is used to send the `neighboring_window` command (e.g. `kitten @ neighboring_window.py right`) from vim when you've reached the last pane and are ready to switch to a non-vim kitty window.
+Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/`. It can be done manually or with the `vim-plug` post-update hook
+``` vim
+Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
+```
+
+The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `neighboring_window.py` kitten is used to send the `neighboring_window` command (e.g. `kitten @ neighboring_window.py right`) from vim when you've reached the last pane and are ready to switch to a non-vim kitty window.
 
 #### Add this snippet to kitty.conf
 

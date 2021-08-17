@@ -1,16 +1,18 @@
 import kitty.conf.utils as ku
 import kitty.key_encoding as ke
-from kitty import keys
+from kittens.tui.handler import result_handler
+import kitty.fast_data_types as fdt
 import re
 
+func_with_args, args_funcs = ku.key_func()
 
 def main():
     pass
 
 def actions(extended):
-    yield keys.defines.GLFW_PRESS
+    yield fdt.GLFW_PRESS
     if extended:
-        yield keys.defines.GLFW_RELEASE
+        yield fdt.GLFW_RELEASE
 
 def convert_mods(mods):
     """
@@ -18,16 +20,17 @@ def convert_mods(mods):
     """
     glfw_mods = 0
     if mods & ke.SHIFT:
-        glfw_mods |= keys.defines.GLFW_MOD_SHIFT
+        glfw_mods |= fdt.GLFW_MOD_SHIFT
     if mods & ke.ALT:
-        glfw_mods |= keys.defines.GLFW_MOD_ALT
+        glfw_mods |= fdt.GLFW_MOD_ALT
     if mods & ke.CTRL:
-        glfw_mods |= keys.defines.GLFW_MOD_CONTROL
+        glfw_mods |= fdt.GLFW_MOD_CONTROL
     if mods & ke.SUPER:
-        glfw_mods |= keys.defines.GLFW_MOD_SUPER
+        glfw_mods |= fdt.GLFW_MOD_SUPER
     return glfw_mods
 
 
+@result_handler(no_ui=True)
 def handle_result(args, result, target_window_id, boss):
     w = boss.window_id_map.get(target_window_id)
     tab = boss.active_tab
@@ -50,20 +53,16 @@ def handle_result(args, result, target_window_id, boss):
             boss.active_tab.neighboring_window(direction)
             return
 
-    mods, key, is_text = ku.parse_kittens_shortcut(key_mapping)
+    # mods, key, is_text = ku.parse_kittens_shortcut(key_mapping)
+    mods, key = ke.parse_shortcut(key_mapping)
 
-    extended = w.screen.extended_keyboard
+    extended = w.screen.current_key_encoding_flags() & 0b1000
 
     for action in actions(extended):
         sequence = (
             ('\x1b_{}\x1b\\' if extended else '{}')
             .format(
-                keys.key_to_bytes(
-                    getattr(keys.defines, 'GLFW_KEY_{}'.format(key.upper())),
-                    w.screen.cursor_key_mode, extended, convert_mods(mods), action)
-                .decode('ascii')))
-        print(repr(sequence))
+                fdt.encode_key_for_tty(
+                    getattr(fdt, 'GLFW_FKEY_{}'.format(key.upper())),
+                    w.screen.cursor_key_mode, extended, convert_mods(mods), action)))
         w.write_to_child(sequence)
-
-
-handle_result.no_ui = True

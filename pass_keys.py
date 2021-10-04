@@ -4,15 +4,16 @@ from kittens.tui.handler import result_handler
 import kitty.fast_data_types as fdt
 import re
 
-func_with_args, args_funcs = ku.key_func()
 
 def main():
     pass
+
 
 def actions(extended):
     yield fdt.GLFW_PRESS
     if extended:
         yield fdt.GLFW_RELEASE
+
 
 def convert_mods(mods):
     """
@@ -34,18 +35,17 @@ def convert_mods(mods):
 def handle_result(args, result, target_window_id, boss):
     w = boss.window_id_map.get(target_window_id)
     tab = boss.active_tab
-    # The direciton to move to, e.g. top, right, bottom, left
+    # The direction to move to, e.g. top, right, bottom, left
     direction = args[2]
     # a key mapping, e.g. "ctrl+h"
-    key_mapping = args[3] 
-    # The regular expresion to use to match against the process name.
+    key_mapping = args[3]
+    # The regular expression to use to match against the process name.
     # This can be changes by passing a fourth argument to pass_keys.py
     # in your kitty.conf file.
     process_name = args[4] if len(args) > 4 else "n?vim"
 
     if w is None:
         return
-
     else:
         fp = w.child.foreground_processes
         # check the first word of the each foreground process
@@ -53,9 +53,7 @@ def handle_result(args, result, target_window_id, boss):
             boss.active_tab.neighboring_window(direction)
             return
 
-    # mods, key, is_text = ku.parse_kittens_shortcut(key_mapping)
     mods, key = ke.parse_shortcut(key_mapping)
-
     extended = w.screen.current_key_encoding_flags() & 0b1000
 
     for action in actions(extended):
@@ -63,6 +61,6 @@ def handle_result(args, result, target_window_id, boss):
             ('\x1b_{}\x1b\\' if extended else '{}')
             .format(
                 fdt.encode_key_for_tty(
-                    getattr(fdt, 'GLFW_FKEY_{}'.format(key.upper())),
+                    ord(key),
                     w.screen.cursor_key_mode, extended, convert_mods(mods), action)))
         w.write_to_child(sequence)

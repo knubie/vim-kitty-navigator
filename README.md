@@ -111,3 +111,26 @@ nnoremap <silent> {Right-Mapping} :KittyNavigateRight<cr>
 *Note* Each instance of `{Left-Mapping}` or `{Down-Mapping}` must be replaced
 in the above code with the desired mapping. Ie, the mapping for `<ctrl-h>` =>
 Left would be created with `nnoremap <silent> <c-h> :KittyNavigateLeft<cr>`.
+
+Troubleshooting
+---------------
+
+If you are not able to navigate around vim, try the following:
+
+1. Add a print statement in `pass_keys.py` between line 7 and 8 like this:
+   ```python
+   def is_window_vim(window, vim_id):
+    fp = window.child.foreground_processes
+    print(fp)
+    return any(re.search(vim_id, p['cmdline'][0], re.I) for p in fp)
+    ```
+2. Then run kitty in a debug mode:
+   ```
+   kitty --debug-keyboard
+   ```
+3. when the new window is opened, open up vim and some splits and try navigating around. When navigating your vim splits you should see some output similar to this:
+   ```
+   KeyPress matched action: kitten
+   [{'pid': 97247, 'cmdline': ['nvim', '.'], 'cwd': '/Users/matt/.config/kitty'}]
+   ```
+The `'cmdline': ['nvim', '.']` part will tell us the title of the vim window that we're using to match against in the script. Double check the regex in `pass_keys.py`, or the regex you passed in to `kitty.confg` with that title to make sure they match.

@@ -1,6 +1,8 @@
-from kittens.tui.handler import result_handler
-from kitty.key_encoding import ( KeyEvent, encode_key_event, parse_shortcut )
 import re
+
+from kittens.tui.handler import result_handler
+from kitty.fast_data_types import encode_key_for_tty
+from kitty.key_encoding import KeyEvent, parse_shortcut
 
 
 def is_window_vim(window, vim_id):
@@ -10,9 +12,20 @@ def is_window_vim(window, vim_id):
 
 def encode_key_mapping(key_mapping):
     mods, key = parse_shortcut(key_mapping)
-    ev = KeyEvent(mods=mods, key=key, shift=bool(mods & 1), alt=bool(mods & 2), ctrl=bool(mods & 4),
-            super=bool(mods & 8), hyper=bool(mods & 16), meta=bool(mods & 32))
-    return encode_key_event(ev)
+    event = KeyEvent(
+        mods=mods,
+        key=key,
+        shift=bool(mods & 1),
+        alt=bool(mods & 2),
+        ctrl=bool(mods & 4),
+        super=bool(mods & 8),
+        hyper=bool(mods & 16),
+        meta=bool(mods & 32),
+    ).as_window_system_event()
+
+    return encode_key_for_tty(
+        event.key, event.shifted_key, event.alternate_key, event.mods, event.action
+    )
 
 
 def main():

@@ -37,7 +37,7 @@ def handle_result(args, result, target_window_id, boss):
     # The direciton to move to, e.g. top, right, bottom, left
     direction = args[2]
     # a key mapping, e.g. "ctrl+h"
-    key_mapping = args[3] 
+    key_mapping = args[3]
     # The regular expresion to use to match against the process name.
     # This can be changes by passing a fourth argument to pass_keys.py
     # in your kitty.conf file.
@@ -55,6 +55,7 @@ def handle_result(args, result, target_window_id, boss):
 
     # mods, key, is_text = ku.parse_kittens_shortcut(key_mapping)
     mods, key = ke.parse_shortcut(key_mapping)
+    key_num = ke.csi_number_for_name(key)
 
     extended = w.screen.current_key_encoding_flags() & 0b1000
 
@@ -63,6 +64,6 @@ def handle_result(args, result, target_window_id, boss):
             ('\x1b_{}\x1b\\' if extended else '{}')
             .format(
                 fdt.encode_key_for_tty(
-                    getattr(fdt, 'GLFW_FKEY_{}'.format(key.upper())),
+                    key_num,
                     w.screen.cursor_key_mode, extended, convert_mods(mods), action)))
         w.write_to_child(sequence)

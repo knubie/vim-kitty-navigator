@@ -117,6 +117,8 @@ Troubleshooting
 
 If you are not able to navigate around vim, try the following:
 
+1. Make sure you are using the latest version of Kitty.
+1. Make sure you are using the latest commit of `vim-kitty-navigator`
 1. Add a print statement in `pass_keys.py` between line 7 and 8 like this:
    ```python
    def is_window_vim(window, vim_id):
@@ -124,11 +126,11 @@ If you are not able to navigate around vim, try the following:
     print(fp)
     return any(re.search(vim_id, p['cmdline'][0], re.I) for p in fp)
     ```
-2. Then run kitty in a debug mode:
+1. Then run kitty in a debug mode:
    ```
    kitty --debug-keyboard
    ```
-3. when the new window is opened, open up vim and some splits and try navigating around. When navigating your vim splits you should see some output similar to this:
+1. when the new window is opened, open up vim and some splits and try navigating around. When navigating your vim splits you should see some output similar to this:
    ```
    KeyPress matched action: kitten
    [{'pid': 97247, 'cmdline': ['nvim', '.'], 'cwd': '/Users/matt/.config/kitty'}]

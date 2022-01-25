@@ -71,7 +71,7 @@ let g:kitty_navigator_installation_path='~/.vim/plugged/vim-kitty-navigator'
 
 To configure the kitty side of this customization there are three parts:
 
-Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/`. It can be done manually or with the `vim-plug` post-update hook:
+Copy both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/vim-kitty-navigator`. It can be done manually or with the `vim-plug` post-update hook:
 
 ``` vim
 function! BuildKittyNavigator(info) abort

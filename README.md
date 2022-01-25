@@ -42,35 +42,67 @@ Then run
 
 ### kitty
 
+Use one of the following methods:
+
+#### 1. Add a Git Submodule
+
+If you use git to version control your kitty config, the best way to integrate is by adding this repo as a git submodule:
+
+```bash
+git submodule add https://github.com/knubie/vim-kitty-navigator.git ~/.config/kitty/vim-kitty-navigator
+```
+
+Assuming that your `kitty.conf` file is in the `~/.config/kitty` directory, no other configuration is required.
+
+#### 2. Reference the Files in `~/.vim/plugged`
+
+You can reference the kitten files in `~/.vim/plugged` (or your `vim-plug` main directory) for this plugin from `kitty.conf`:
+```
+map ctrl+j kitten ~/.vim/plugged/vim-kitty-navigator/pass_keys.py neighboring_window bottom ctrl+j
+```
+
+However, in order for that to work properly you need to overwrite the `g:kitty_navigator_installation_path` from `.vimrc`:
+
+```vim
+let g:kitty_navigator_installation_path='~/.vim/plugged/vim-kitty-navigator'
+```
+
+#### 3. Copy the `pass_keys.py` and `neighboring_window.py` Kittens
+
 To configure the kitty side of this customization there are three parts:
 
-#### Add `pass_keys.py` and `neighboring_window.py` kittens
+Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/`. It can be done manually or with the `vim-plug` post-update hook:
 
-Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/`. It can be done manually or with the `vim-plug` post-update hook
 ``` vim
-Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
+function! BuildKittyNavigator(info) abort
+    !mkdir -p ~/.config/kitty/vim-kitty-navigator
+    !cp ./*.py ~/.config/kitty/vim-kitty-navigator
+endfunction
+Plug 'knubie/vim-kitty-navigator', {'do': function('BuildKittyNavigator')}
 ```
 
 The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `neighboring_window.py` kitten is used to send the `neighboring_window` command (e.g. `kitten @ neighboring_window.py right`) from vim when you've reached the last pane and are ready to switch to a non-vim kitty window.
+
+-----
 
 #### Add this snippet to kitty.conf
 
 Add the following to your `~/.config/kitty/kitty.conf` file:
 
 ```conf
-map ctrl+j kitten pass_keys.py neighboring_window bottom ctrl+j
-map ctrl+k kitten pass_keys.py neighboring_window top    ctrl+k
-map ctrl+h kitten pass_keys.py neighboring_window left   ctrl+h
-map ctrl+l kitten pass_keys.py neighboring_window right  ctrl+l
+map ctrl+j kitten path/to/pass_keys.py neighboring_window bottom ctrl+j
+map ctrl+k kitten path/to/pass_keys.py neighboring_window top    ctrl+k
+map ctrl+h kitten path/to/pass_keys.py neighboring_window left   ctrl+h
+map ctrl+l kitten path/to/pass_keys.py neighboring_window right  ctrl+l
 ```
 
 By default `vim-kitty-navigator` uses the name of the current foreground process to detect when it is in a (neo)vim session or not. If that doesn't work, (or if you want to support applications other than vim) you can supply a fourth optional argument to the `pass_keys.py` call in your `kitty.conf` file to match the process name. 
 
 ```conf
-map ctrl+j kitten pass_keys.py neighboring_window bottom ctrl+j "^.* - nvim$"
-map ctrl+k kitten pass_keys.py neighboring_window top    ctrl+k "^.* - nvim$"
-map ctrl+h kitten pass_keys.py neighboring_window left   ctrl+h "^.* - nvim$"
-map ctrl+l kitten pass_keys.py neighboring_window right  ctrl+l "^.* - nvim$"
+map ctrl+j kitten path/to/pass_keys.py neighboring_window bottom ctrl+j "^.* - nvim$"
+map ctrl+k kitten path/to/pass_keys.py neighboring_window top    ctrl+k "^.* - nvim$"
+map ctrl+h kitten path/to/pass_keys.py neighboring_window left   ctrl+h "^.* - nvim$"
+map ctrl+l kitten path/to/pass_keys.py neighboring_window right  ctrl+l "^.* - nvim$"
 ```
 
 #### Make kitty listen to control messages
@@ -111,6 +143,14 @@ nnoremap <silent> {Right-Mapping} :KittyNavigateRight<cr>
 *Note* Each instance of `{Left-Mapping}` or `{Down-Mapping}` must be replaced
 in the above code with the desired mapping. Ie, the mapping for `<ctrl-h>` =>
 Left would be created with `nnoremap <silent> <c-h> :KittyNavigateLeft<cr>`.
+
+### Custom Installation Path
+
+Add the following to your `~/.vimrc` to define the installation path of the kittens:
+
+```vim
+let g:kitty_navigator_installation_path = 'path/to/vim-kitty-navigator-directory'
+```
 
 Troubleshooting
 ---------------

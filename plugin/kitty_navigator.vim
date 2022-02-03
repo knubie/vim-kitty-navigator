@@ -38,10 +38,6 @@ augroup kitty_navigator
   autocmd WinEnter * let s:kitty_is_last_pane = 0
 augroup END
 
-if !get(g:, 'kitty_navigator_installation_path')
-  let g:kitty_navigator_installation_path = './vim-kitty-navigator'
-endif
-
 " Function: s:path_join(pathparts, {path_separator}) {{{3
 function! s:path_join(pathparts, ...) abort
   let sep
@@ -61,6 +57,8 @@ function! s:KittyAwareNavigate(direction)
   endif
   let at_tab_page_edge = (nr == winnr())
 
+  let installation_path = get(g:, 'kitty_navigator_installation_path', './')
+
   if kitty_last_pane || at_tab_page_edge
     let mappings = {
     \   "h": "left",
@@ -68,7 +66,7 @@ function! s:KittyAwareNavigate(direction)
     \   "k": "top",
     \   "l": "right"
     \ }
-    let args = 'kitten ' . s:path_join([get(g:, 'kitty_navigator_installation_path'), 'neighboring_window.py']) . ' ' . mappings[a:direction]
+    let args = 'kitten ' . s:path_join([installation_path, 'neighboring_window.py']) . ' ' . mappings[a:direction]
     silent call s:KittyCommand(args)
     let s:kitty_is_last_pane = 1
   else

@@ -31,7 +31,8 @@ CONFIGURATION                             *kitty-navigator-configuration*
 * Custom installation path:
 This allows you to configure the installation path of the kittens contained in this plugin.
 It can be a relative (to the directory containing `kitty.conf`) or an absolute path.
-Default: `./vim-kitty-navigator`. Assumes that this repo cloned/added as a submodule into the kitty home dir.
+Default: `./` (assumes that the files were copied to the same directy as
+`kitty.conf`).
 
 >
  let g:kitty_navigator_installation_path = './path/to/installation'

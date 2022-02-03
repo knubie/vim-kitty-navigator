@@ -44,30 +44,7 @@ Then run
 
 Use one of the following methods:
 
-#### 1. Add a Git Submodule
-
-If you use git to version control your kitty config, the best way to integrate is by adding this repo as a git submodule:
-
-```bash
-git submodule add https://github.com/knubie/vim-kitty-navigator.git ~/.config/kitty/vim-kitty-navigator
-```
-
-Assuming that your `kitty.conf` file is in the `~/.config/kitty` directory, no other configuration is required.
-
-#### 2. Reference the Files in `~/.vim/plugged`
-
-You can reference the kitten files in `~/.vim/plugged` (or your `vim-plug` main directory) for this plugin from `kitty.conf`:
-```
-map ctrl+j kitten ~/.vim/plugged/vim-kitty-navigator/pass_keys.py neighboring_window bottom ctrl+j
-```
-
-However, in order for that to work properly you need to overwrite the `g:kitty_navigator_installation_path` from `.vimrc`:
-
-```vim
-let g:kitty_navigator_installation_path='~/.vim/plugged/vim-kitty-navigator'
-```
-
-#### 3. Copy the `pass_keys.py` and `neighboring_window.py` Kittens
+#### 1. Copy the `pass_keys.py` and `neighboring_window.py` Kittens
 
 To configure the kitty side of this customization there are three parts:
 
@@ -79,6 +56,33 @@ function! BuildKittyNavigator(info) abort
     !cp ./*.py ~/.config/kitty/vim-kitty-navigator
 endfunction
 Plug 'knubie/vim-kitty-navigator', {'do': function('BuildKittyNavigator')}
+```
+
+#### 2. Add a Git Submodule
+
+If you use git to version control your kitty config, the best way to integrate is by adding this repo as a git submodule:
+
+```bash
+git submodule add https://github.com/knubie/vim-kitty-navigator.git ~/.config/kitty/vim-kitty-navigator
+```
+
+However, in order for that to work properly you need to overwrite the `g:kitty_navigator_installation_path` from `.vimrc`:
+
+```vim
+let g:kitty_navigator_installation_path='./vim-kitty-navigator'
+```
+
+#### 3. Reference the Files in `~/.vim/plugged`
+
+You can reference the kitten files in `~/.vim/plugged` (or your `vim-plug` main directory) for this plugin from `kitty.conf`:
+```
+map ctrl+j kitten ~/.vim/plugged/vim-kitty-navigator/pass_keys.py neighboring_window bottom ctrl+j
+```
+
+However, in order for that to work properly you need to overwrite the `g:kitty_navigator_installation_path` from `.vimrc`:
+
+```vim
+let g:kitty_navigator_installation_path='~/.vim/plugged/vim-kitty-navigator'
 ```
 
 The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `neighboring_window.py` kitten is used to send the `neighboring_window` command (e.g. `kitten @ neighboring_window.py right`) from vim when you've reached the last pane and are ready to switch to a non-vim kitty window.

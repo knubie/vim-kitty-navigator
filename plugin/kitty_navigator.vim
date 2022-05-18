@@ -5,6 +5,7 @@ if exists("g:loaded_kitty_navigator") || &cp || v:version < 700
   finish
 endif
 let g:loaded_kitty_navigator = 1
+let s:kitty_navigator_directory = expand('<sfile>:p:h:h')
 
 function! s:VimNavigate(direction)
   try
@@ -53,7 +54,8 @@ function! s:KittyAwareNavigate(direction)
     \   "k": "top",
     \   "l": "right"
     \ }
-    let args = 'kitten neighboring_window.py' . ' ' . mappings[a:direction]
+    let neighboring_window_py = s:kitty_navigator_directory .. '/neighboring_window.py'
+    let args = 'kitten ' .. neighboring_window_py .. ' ' . mappings[a:direction]
     silent call s:KittyCommand(args)
     let s:kitty_is_last_pane = 1
   else

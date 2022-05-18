@@ -43,6 +43,6 @@ def handle_result(args, result, target_window_id, boss):
         return
     if is_window_vim(window, vim_id):
         encoded = encode_key_mapping(key_mapping)
-        window.write_to_child(encoded)
+        window.write_to_child(encoded.encode())
     else:
         boss.active_tab.neighboring_window(direction)

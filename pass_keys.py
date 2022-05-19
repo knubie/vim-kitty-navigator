@@ -1,16 +1,15 @@
 import re
 
 from kittens.tui.handler import result_handler
-from kitty.fast_data_types import encode_key_for_tty
 from kitty.key_encoding import KeyEvent, parse_shortcut
 
 
 def is_window_vim(window, vim_id):
     fp = window.child.foreground_processes
-    return any(re.search(vim_id, p['cmdline'][0], re.I) for p in fp)
+    return any(re.search(vim_id, p['cmdline'][0] if len(p['cmdline']) else '', re.I) for p in fp)
 
 
-def encode_key_mapping(key_mapping):
+def encode_key_mapping(window, key_mapping):
     mods, key = parse_shortcut(key_mapping)
     event = KeyEvent(
         mods=mods,
@@ -23,9 +22,7 @@ def encode_key_mapping(key_mapping):
         meta=bool(mods & 32),
     ).as_window_system_event()
 
-    return encode_key_for_tty(
-        event.key, event.shifted_key, event.alternate_key, event.mods, event.action
-    )
+    return window.encoded_key(event)
 
 
 def main():

@@ -85,6 +85,15 @@ kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty
 kitty -o allow_remote_control=yes --single-instance --listen-on unix:/tmp/mykitty
 ```
 
+or if you don't want to start kitty with above mentioned command,
+simply add below configuration in your `kitty.conf` file.
+
+NOTE: Close kitty completely and restart, then only it works as kitty doesnt support to `allow_remote_control` on configuration reload.
+
+```
+allow_remote_control yes
+listen_on unix:/tmp/mykitty
+```
 Configuration
 -------------
 

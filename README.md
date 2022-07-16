@@ -90,10 +90,22 @@ simply add below configuration in your `kitty.conf` file.
 
 NOTE: Close kitty completely and restart, then only it works as kitty doesnt support to `allow_remote_control` on configuration reload.
 
+For Linux Systems:
+
+```
+allow_remote_control yes
+listen_on unix:@mykitty
+```
+
+For Other Unix Systems:
+
 ```
 allow_remote_control yes
 listen_on unix:/tmp/mykitty
 ```
+
+Also, Mac users can learn more about command line options in kitty, from [this](https://sw.kovidgoyal.net/kitty/faq/#how-do-i-specify-command-line-options-for-kitty-on-macos) link.
+
 Configuration
 -------------
 

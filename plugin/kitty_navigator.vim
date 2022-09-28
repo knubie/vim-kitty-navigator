@@ -27,7 +27,9 @@ command! KittyNavigateUp       call s:KittyAwareNavigate('k')
 command! KittyNavigateRight    call s:KittyAwareNavigate('l')
 
 function! s:KittyCommand(args)
-  let cmd = 'kitty @ ' . a:args
+  let pw = get(g:, 'kitty_navigator_password', 0)
+  let pw_s = pw != "" ? '--password="' . pw . '" ' : ''
+  let cmd = 'kitty @ ' . pw_s . a:args
   return system(cmd)
 endfunction
 

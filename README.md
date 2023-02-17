@@ -100,6 +100,13 @@ allow_remote_control yes
 listen_on unix:/tmp/mykitty
 ```
 
+You can provide a [kitty remote control password](https://sw.kovidgoyal.net/kitty/conf/#opt-kitty.remote_control_password)
+by setting the variable `g:kitty_navigator_password` to the desired kitty
+password, e.g.:
+``` vim
+let g:kitty_navigator_password = "my_vim_password"
+```
+
 Also, Mac users can learn more about command line options in kitty, from [this](https://sw.kovidgoyal.net/kitty/faq/#how-do-i-specify-command-line-options-for-kitty-on-macos) link.
 
 Configuration

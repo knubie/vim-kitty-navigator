@@ -39,7 +39,6 @@ def handle_result(args, result, target_window_id, boss):
     if window is None:
         return
     if is_window_vim(window, vim_id):
-        # TODO: investigate if splitting on > has side effects
         for keymap in key_mapping.split(">"):
             encoded = encode_key_mapping(window, keymap)
             window.write_to_child(encoded)

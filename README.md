@@ -12,10 +12,10 @@ Usage
 This plugin provides the following mappings which allow you to move between
 Vim panes and kitty splits seamlessly.
 
-- `<ctrl-h>` => Left
-- `<ctrl-j>` => Down
-- `<ctrl-k>` => Up
-- `<ctrl-l>` => Right
+- `<ctrl-h>` → Left
+- `<ctrl-j>` → Down
+- `<ctrl-k>` → Up
+- `<ctrl-l>` → Right
 
 If you want to use alternate key mappings, see the [configuration section below](https://github.com/knubie/vim-kitty-navigator#custom-key-bindings).
 
@@ -46,7 +46,10 @@ To configure the kitty side of this customization there are three parts:
 
 #### 1. Add `pass_keys.py` and `neighboring_window.py` kittens
 
-Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/`. It can be done manually or with the `vim-plug` post-update hook
+Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/`.
+
+This can be done manually or with the `vim-plug` post-update hook:
+
 ``` vim
 Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
 ```
@@ -88,8 +91,6 @@ kitty -o allow_remote_control=yes --single-instance --listen-on unix:/tmp/mykitt
 or if you don't want to start kitty with above mentioned command,
 simply add below configuration in your `kitty.conf` file.
 
-NOTE: Close kitty completely and restart, then only it works as kitty doesnt support to `allow_remote_control` on configuration reload.
-
 ```
 # For linux only:
 allow_remote_control yes
@@ -99,6 +100,9 @@ listen_on unix:@mykitty
 allow_remote_control yes
 listen_on unix:/tmp/mykitty
 ```
+
+> **Note**
+> Close kitty completely and restart. Kitty does not support `allow_remote_control` on configuration reload.
 
 You can provide a [kitty remote control password](https://sw.kovidgoyal.net/kitty/conf/#opt-kitty.remote_control_password)
 by setting the variable `g:kitty_navigator_password` to the desired kitty
@@ -132,7 +136,8 @@ nnoremap <silent> {Up-Mapping} :KittyNavigateUp<cr>
 nnoremap <silent> {Right-Mapping} :KittyNavigateRight<cr>
 ```
 
-*Note* Each instance of `{Left-Mapping}` or `{Down-Mapping}` must be replaced
+> **Note**
+> Each instance of `{Left-Mapping}` or `{Down-Mapping}` must be replaced
 in the above code with the desired mapping. Ie, the mapping for `<ctrl-h>` =>
 Left would be created with `nnoremap <silent> <c-h> :KittyNavigateLeft<cr>`.
 

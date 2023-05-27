@@ -1,13 +1,11 @@
-Vim Kitty Navigator
-==================
+# Vim Kitty Navigator
 
 This plugin is a port of [Chris Toomey's vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator) plugin. When combined with a set of kitty
 key bindings and kittens, the plugin will allow you to navigate seamlessly between vim and kitty splits using a consistent set of hotkeys.
 
 **NOTE**: This requires kitty v0.13.1 or higher.
 
-Usage
------
+## Usage
 
 This plugin provides the following mappings which allow you to move between
 Vim panes and kitty splits seamlessly.
@@ -19,8 +17,7 @@ Vim panes and kitty splits seamlessly.
 
 If you want to use alternate key mappings, see the [configuration section below](https://github.com/knubie/vim-kitty-navigator#custom-key-bindings).
 
-Installation
-------------
+## Installation
 
 ### Vim
 
@@ -30,7 +27,7 @@ install the plugin:
 
 Add the following line to your `~/.vimrc` file
 
-``` vim
+```vim
 Plug 'knubie/vim-kitty-navigator'
 ```
 
@@ -50,11 +47,11 @@ Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/k
 
 This can be done manually or with the `vim-plug` post-update hook:
 
-``` vim
+```vim
 Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
 ```
 
-The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `neighboring_window.py` kitten is used to send the `neighboring_window` command (e.g. `kitten @ neighboring_window.py right`) from vim when you've reached the last pane and are ready to switch to a non-vim kitty window.
+The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `neighboring_window.py` kitten is used to send the `neighboring_window` command (e.g. `kitten @ neighboring_window.py right`) from vim when you've reached the last pane and are ready to switch to a non-vim kitty window. The `get_layout.py` kitten checks if the current kitty tab is in `stack` layout and if so noops when attempting to navigate from vim to another kitty window.
 
 #### 2. Add this snippet to kitty.conf
 
@@ -67,7 +64,7 @@ map ctrl+h kitten pass_keys.py neighboring_window left   ctrl+h
 map ctrl+l kitten pass_keys.py neighboring_window right  ctrl+l
 ```
 
-By default `vim-kitty-navigator` uses the name of the current foreground process to detect when it is in a (neo)vim session or not. If that doesn't work, (or if you want to support applications other than vim) you can supply a fourth optional argument to the `pass_keys.py` call in your `kitty.conf` file to match the process name. 
+By default `vim-kitty-navigator` uses the name of the current foreground process to detect when it is in a (neo)vim session or not. If that doesn't work, (or if you want to support applications other than vim) you can supply a fourth optional argument to the `pass_keys.py` call in your `kitty.conf` file to match the process name.
 
 ```conf
 map ctrl+j kitten pass_keys.py neighboring_window bottom ctrl+j "^.* - nvim$"
@@ -107,14 +104,14 @@ listen_on unix:/tmp/mykitty
 You can provide a [kitty remote control password](https://sw.kovidgoyal.net/kitty/conf/#opt-kitty.remote_control_password)
 by setting the variable `g:kitty_navigator_password` to the desired kitty
 password, e.g.:
-``` vim
+
+```vim
 let g:kitty_navigator_password = "my_vim_password"
 ```
 
 Also, Mac users can learn more about command line options in kitty, from [this](https://sw.kovidgoyal.net/kitty/faq/#how-do-i-specify-command-line-options-for-kitty-on-macos) link.
 
-Configuration
--------------
+## Configuration
 
 ### Custom Key Bindings
 
@@ -127,7 +124,7 @@ match.
 
 Add the following to your `~/.vimrc` to define your custom maps:
 
-``` vim
+```vim
 let g:kitty_navigator_no_mappings = 1
 
 nnoremap <silent> {Left-Mapping} :KittyNavigateLeft<cr>
@@ -138,11 +135,21 @@ nnoremap <silent> {Right-Mapping} :KittyNavigateRight<cr>
 
 > **Note**
 > Each instance of `{Left-Mapping}` or `{Down-Mapping}` must be replaced
-in the above code with the desired mapping. Ie, the mapping for `<ctrl-h>` =>
-Left would be created with `nnoremap <silent> <c-h> :KittyNavigateLeft<cr>`.
+> in the above code with the desired mapping. Ie, the mapping for `<ctrl-h>` =>
+> Left would be created with `nnoremap <silent> <c-h> :KittyNavigateLeft<cr>`.
 
-Troubleshooting
----------------
+### Navigating In Stacked Layout
+
+By default `vim-kitty-navigator` prevents navigating to "hidden" windows while in
+stacked layout. This is to prevent accidentally switching to a window that is
+"hidden" behind the current window. The default behavior can be overridden by
+setting the `g:kitty_navigator_enable_stack_layout` variable to `1` in your `~/.vimrc`
+
+```vim
+let g:kitty_navigator_enable_stack_layout = 1
+```
+
+## Troubleshooting
 
 If you are not able to navigate around vim, try the following:
 
@@ -154,7 +161,7 @@ If you are not able to navigate around vim, try the following:
     fp = window.child.foreground_processes
     print(fp)
     return any(re.search(vim_id, p['cmdline'][0], re.I) for p in fp)
-    ```
+   ```
 1. Then run kitty in a debug mode:
    ```
    kitty --debug-keyboard
@@ -164,4 +171,4 @@ If you are not able to navigate around vim, try the following:
    KeyPress matched action: kitten
    [{'pid': 97247, 'cmdline': ['nvim', '.'], 'cwd': '/Users/matt/.config/kitty'}]
    ```
-The `'cmdline': ['nvim', '.']` part will tell us the title of the vim window that we're using to match against in the script. Double check the regex in `pass_keys.py`, or the regex you passed in to `kitty.confg` with that title to make sure they match.
+   The `'cmdline': ['nvim', '.']` part will tell us the title of the vim window that we're using to match against in the script. Double check the regex in `pass_keys.py`, or the regex you passed in to `kitty.confg` with that title to make sure they match.

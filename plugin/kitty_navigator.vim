@@ -67,7 +67,7 @@ function! s:KittyAwareNavigate(direction)
     \   "l": "right"
     \ }
     let args = 'kitten neighboring_window.py' . ' ' . mappings[a:direction]
-    call s:KittyCommand(args)
+    silent call s:KittyCommand(args)
     let s:kitty_is_last_pane = 1
   else
     let s:kitty_is_last_pane = 0

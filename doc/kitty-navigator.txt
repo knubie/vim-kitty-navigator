@@ -27,4 +27,12 @@ CONFIGURATION                             *kitty-navigator-configuration*
  nnoremap <silent> {Right-Mapping} :KittyNavigateRight<cr>
  nnoremap <silent> {Previous-Mapping} :KittyNavigatePrevious<cr>
 
+* Navigating In Stacked Layout
+let g:kitty_navigator_enable_stack_layout = 1
+
+By default `vim-kitty-navigator` prevents navigating to "hidden" windows while in
+stacked layout. This is to prevent accidentally switching to a window that is
+"hidden" behind the current window. The default behavior can be overridden by 
+setting the `kitty_navigator_enable_stack_layout` option to 1.
+
  vim:tw=78:ts=8:ft=help:norl:

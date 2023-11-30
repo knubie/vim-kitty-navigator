@@ -40,6 +40,11 @@ augroup kitty_navigator
   autocmd WinEnter * let s:kitty_is_last_pane = 0
 augroup END
 
+function! s:KittyIsInStackLayout()
+  let layout = s:KittyCommand('kitten get_layout.py')
+  return layout =~ 'stack'
+endfunction
+
 function! s:KittyAwareNavigate(direction)
   let nr = winnr()
   let kitty_last_pane = (a:direction == 'p' && s:kitty_is_last_pane)
@@ -48,7 +53,13 @@ function! s:KittyAwareNavigate(direction)
   endif
   let at_tab_page_edge = (nr == winnr())
 
-  if kitty_last_pane || at_tab_page_edge
+  let kitty_is_in_stack_layout = s:KittyIsInStackLayout()
+  let stack_layout_enabled = get(g:, 'kitty_navigator_enable_stack_layout', 0)
+
+  let can_navigate_in_layout = !kitty_is_in_stack_layout || stack_layout_enabled 
+  
+
+  if (kitty_last_pane || at_tab_page_edge) && can_navigate_in_layout 
     let mappings = {
     \   "h": "left",
     \   "j": "bottom",

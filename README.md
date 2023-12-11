@@ -3,7 +3,8 @@
 This plugin is a port of [Chris Toomey's vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator) plugin. When combined with a set of kitty
 key bindings and kittens, the plugin will allow you to navigate seamlessly between vim and kitty splits using a consistent set of hotkeys.
 
-**NOTE**: This requires kitty v0.13.1 or higher.
+> [!IMPORTANT]
+> This plugin requires kitty v0.30.0 or higher.
 
 ## Usage
 
@@ -41,36 +42,36 @@ Then run
 
 To configure the kitty side of this customization there are three parts:
 
-#### 1. Add `pass_keys.py` and `neighboring_window.py` kittens
+#### 1. Add `pass_keys.py` and `get_layout.py` kittens
 
-Move both `pass_keys.py` and `neighboring_window.py` kittens to the `~/.config/kitty/`.
+Move both `pass_keys.py` and `get_layout.py` kittens to the `~/.config/kitty/` directory.
 
-This can be done manually or with the `vim-plug` post-update hook:
+This can be done manually or with a `vim-plug` post-update hook:
 
 ```vim
 Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
 ```
 
-The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `neighboring_window.py` kitten is used to send the `neighboring_window` command (e.g. `kitten @ neighboring_window.py right`) from vim when you've reached the last pane and are ready to switch to a non-vim kitty window. The `get_layout.py` kitten checks if the current kitty tab is in `stack` layout and if so noops when attempting to navigate from vim to another kitty window.
+The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `get_layout.py` kitten is used to check whether the current kitty tab is in `stack` layout mode so that it can prevent accidentally navigating to a hidden stack window.
 
 #### 2. Add this snippet to kitty.conf
 
 Add the following to your `~/.config/kitty/kitty.conf` file:
 
 ```conf
-map ctrl+j kitten pass_keys.py neighboring_window bottom ctrl+j
-map ctrl+k kitten pass_keys.py neighboring_window top    ctrl+k
-map ctrl+h kitten pass_keys.py neighboring_window left   ctrl+h
-map ctrl+l kitten pass_keys.py neighboring_window right  ctrl+l
+map ctrl+j kitten pass_keys.py bottom ctrl+j
+map ctrl+k kitten pass_keys.py top    ctrl+k
+map ctrl+h kitten pass_keys.py left   ctrl+h
+map ctrl+l kitten pass_keys.py right  ctrl+l
 ```
 
-By default `vim-kitty-navigator` uses the name of the current foreground process to detect when it is in a (neo)vim session or not. If that doesn't work, (or if you want to support applications other than vim) you can supply a fourth optional argument to the `pass_keys.py` call in your `kitty.conf` file to match the process name.
+By default `vim-kitty-navigator` uses the name of the current foreground process to detect when it is in a (neo)vim session or not. If that doesn't work, (or if you want to support applications other than vim) you can supply a [regular expression](https://docs.python.org/3/library/re.html#re.search) as a third optional argument to the `pass_keys.py` call in your `kitty.conf` file to match the process name.
 
 ```conf
-map ctrl+j kitten pass_keys.py neighboring_window bottom ctrl+j "^.* - nvim$"
-map ctrl+k kitten pass_keys.py neighboring_window top    ctrl+k "^.* - nvim$"
-map ctrl+h kitten pass_keys.py neighboring_window left   ctrl+h "^.* - nvim$"
-map ctrl+l kitten pass_keys.py neighboring_window right  ctrl+l "^.* - nvim$"
+map ctrl+j kitten pass_keys.py bottom ctrl+j "^.* - nvim$"
+map ctrl+k kitten pass_keys.py top    ctrl+k "^.* - nvim$"
+map ctrl+h kitten pass_keys.py left   ctrl+h "^.* - nvim$"
+map ctrl+l kitten pass_keys.py right  ctrl+l "^.* - nvim$"
 ```
 
 #### 3. Make kitty listen to control messages
@@ -98,8 +99,8 @@ allow_remote_control yes
 listen_on unix:/tmp/mykitty
 ```
 
-> **Note**
-> Close kitty completely and restart. Kitty does not support `allow_remote_control` on configuration reload.
+> [!TIP]
+> After updating kitty.conf, close kitty completely and restart. Kitty does not support enabling `allow_remote_control` on configuration reload.
 
 You can provide a [kitty remote control password](https://sw.kovidgoyal.net/kitty/conf/#opt-kitty.remote_control_password)
 by setting the variable `g:kitty_navigator_password` to the desired kitty
@@ -109,7 +110,8 @@ password, e.g.:
 let g:kitty_navigator_password = "my_vim_password"
 ```
 
-Also, Mac users can learn more about command line options in kitty, from [this](https://sw.kovidgoyal.net/kitty/faq/#how-do-i-specify-command-line-options-for-kitty-on-macos) link.
+> [!TIP]
+> Mac users can learn more about command line options in kitty, from [this](https://sw.kovidgoyal.net/kitty/faq/#how-do-i-specify-command-line-options-for-kitty-on-macos) link.
 
 ## Configuration
 
@@ -133,7 +135,7 @@ nnoremap <silent> {Up-Mapping} :KittyNavigateUp<cr>
 nnoremap <silent> {Right-Mapping} :KittyNavigateRight<cr>
 ```
 
-> **Note**
+> [!NOTE]
 > Each instance of `{Left-Mapping}` or `{Down-Mapping}` must be replaced
 > in the above code with the desired mapping. Ie, the mapping for `<ctrl-h>` =>
 > Left would be created with `nnoremap <silent> <c-h> :KittyNavigateLeft<cr>`.
@@ -148,6 +150,11 @@ setting the `g:kitty_navigator_enable_stack_layout` variable to `1` in your `~/.
 ```vim
 let g:kitty_navigator_enable_stack_layout = 1
 ```
+
+> [!WARNING]
+> ## Breaking changes
+>
+> The latest version of this plugin requires kitty [v0.30.0](https://sw.kovidgoyal.net/kitty/changelog/) or higher. This version introduced a new option to `kitty @ focus-window` that allows focusing a neighboring window.
 
 ## Troubleshooting
 

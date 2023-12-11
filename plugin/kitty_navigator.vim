@@ -66,7 +66,7 @@ function! s:KittyAwareNavigate(direction)
     \   "k": "top",
     \   "l": "right"
     \ }
-    let args = 'kitten neighboring_window.py' . ' ' . mappings[a:direction]
+    let args = 'focus-window --match neighbor:' . mappings[a:direction]
     silent call s:KittyCommand(args)
     let s:kitty_is_last_pane = 1
   else

@@ -158,10 +158,12 @@ let g:kitty_navigator_enable_stack_layout = 1
 
 ## Troubleshooting
 
+### vim<->vim navigation
+
 If you are not able to navigate around vim, try the following:
 
-1. Make sure you are using the latest version of Kitty.
-1. Make sure you are using the latest commit of `vim-kitty-navigator`
+1. Make sure you are using the latest version of Kitty. (If you are on MacOS, make sure the kitty in your `/Applications` folder is the right version as well.)
+1. Make sure you are using the latest commit of `vim-kitty-navigator` (both within `~/.config/kitty` and the vim plugin).
 1. Add a print statement in `pass_keys.py` between line 7 and 8 like this:
    ```python
    def is_window_vim(window, vim_id):
@@ -179,3 +181,36 @@ If you are not able to navigate around vim, try the following:
    [{'pid': 97247, 'cmdline': ['nvim', '.'], 'cwd': '/Users/matt/.config/kitty'}]
    ```
    The `'cmdline': ['nvim', '.']` part will tell us the title of the vim window that we're using to match against in the script. Double check the regex in `pass_keys.py`, or the regex you passed in to `kitty.confg` with that title to make sure they match.
+
+### vim->kitty navigation
+
+If you are able to go from kitty -> vim but not vim -> kitty, try the following:
+
+1. Make sure you are using the latest version of Kitty. (If you are on MacOS, make sure the kitty in your `/Applications` folder is the right version as well.)
+1. Make sure you are using the latest commit of `vim-kitty-navigator` (both within `~/.config/kitty` and the vim plugin).
+1. Make sure other plugins are not overriding the key bindings. To test this, split your kitty window and open `vim` in the left pane. Run `:KittyNavigateRight`. If it moves focus to the right-side kitty window, it's likely another plugin is changing the `ctrl-l` mapping.
+1. Try manually setting the mappings:
+
+    `~/.vimrc`
+    ```vim
+    let g:kitty_navigator_no_mappings = 1
+
+    nnoremap <silent> <C-h> :KittyNavigateLeft <CR>
+    nnoremap <silent> <C-j> :KittyNavigateDown <CR>
+    nnoremap <silent> <C-k> :KittyNavigateUp <CR>
+    nnoremap <silent> <C-l> :KittyNavigateRight <CR>
+    ```
+    If you use `neovim` and `init.lua`:
+
+    `~/.config/nvim/init.lua`
+    ```lua
+    if os.getenv("TERM") == "xterm-kitty" then
+        vim.g.kitty_navigator_no_mappings = 1
+        vim.g.tmux_navigator_no_mappings = 1
+
+        vim.api.nvim_set_keymap('n', 'C-h', ':KittyNavigateLeft <CR>', { noremap = true, silent = true })
+        vim.api.nvim_set_keymap('n', 'C-j', ':KittyNavigateDown <CR>', { noremap = true, silent = true })
+        vim.api.nvim_set_keymap('n', 'C-k', ':KittyNavigateUp <CR>', { noremap = true, silent = true })
+        vim.api.nvim_set_keymap('n', 'C-l', ':KittyNavigateRight <CR>', { noremap = true, silent = true })
+    end
+    ```

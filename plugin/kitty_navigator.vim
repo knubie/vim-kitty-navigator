@@ -27,7 +27,7 @@ command! KittyNavigateUp       call s:KittyAwareNavigate('k')
 command! KittyNavigateRight    call s:KittyAwareNavigate('l')
 
 function! s:KittyCommand(args)
-  let cmd = ['kitty', '@']
+  let cmd = ['kitten', '@']
   let pw = get(g:, 'kitty_navigator_password', 0)
   if pw != ""
     call add(cmd, '--password=' . pw)
@@ -36,11 +36,14 @@ function! s:KittyCommand(args)
   return system(cmd)
 endfunction
 
+call s:KittyCommand('set-user-vars IS_VIM=true')
+
 let s:kitty_is_last_pane = 0
 
 augroup kitty_navigator
   au!
   autocmd WinEnter * let s:kitty_is_last_pane = 0
+  autocmd VimLeavePre * s:KittyCommand('set-user-vars IS_VIM=false')
 augroup END
 
 function! s:KittyIsInStackLayout()

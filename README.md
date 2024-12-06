@@ -20,25 +20,24 @@ If you want to use alternate key mappings, see the [configuration section below]
 
 ## Installation
 
-### Vim
+### Neo/Vim
 
-If you don't have a preferred installation method, I recommend using [vim-plug](https://github.com/junegunn/vim-plug).
-Assuming you have `vim-plug` installed and configured, the following steps will
-install the plugin:
+You can install `vim-kitty-navigator` using your favorite plugins manager:
 
-Add the following line to your `~/.vimrc` file
-
+Using [vim-plug](https://github.com/junegunn/vim-plug)
 ```vim
 Plug 'knubie/vim-kitty-navigator'
 ```
 
-Then run
-
+Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+```lua
+-- init.lua
+{
+    "knubie/vim-kitty-navigator"
+}
 ```
-:PlugInstall
-```
 
-### kitty
+### Kitty
 
 To configure the kitty side of this customization there are three parts:
 
@@ -46,10 +45,20 @@ To configure the kitty side of this customization there are three parts:
 
 Move both `pass_keys.py` and `get_layout.py` kittens to the `~/.config/kitty/` directory.
 
-This can be done manually or with a `vim-plug` post-update hook:
+This can be done manually or with a post-update hook in your package manager:
 
+Using [vim-plug](https://github.com/junegunn/vim-plug)
 ```vim
 Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
+```
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+```lua
+-- init.lua
+{
+    "knubie/vim-kitty-navigator",
+    build = "cp ./*.py ~/.config/kitty/",
+}
 ```
 
 The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `get_layout.py` kitten is used to check whether the current kitty tab is in `stack` layout mode so that it can prevent accidentally navigating to a hidden stack window.

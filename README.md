@@ -31,7 +31,6 @@ Plug 'knubie/vim-kitty-navigator'
 
 Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
--- init.lua
 {
     "knubie/vim-kitty-navigator"
 }
@@ -41,53 +40,122 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 To configure the kitty side of this customization there are three parts:
 
-#### 1. Add `pass_keys.py` and `get_layout.py` kittens
+#### 1. Add `get_layout.py` kitten
 
-Move both `pass_keys.py` and `get_layout.py` kittens to the `~/.config/kitty/` directory.
+Move `get_layout.py` kitten to the `~/.config/kitty/` directory.
 
 This can be done manually or with a post-update hook in your package manager:
 
 Using [vim-plug](https://github.com/junegunn/vim-plug)
 ```vim
-Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
+Plug 'knubie/vim-kitty-navigator', {'do': '[ -d "~/.config/kitty/" ] && cp ./*.py ~/.config/kitty/'}
 ```
 
 Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
--- init.lua
 {
-    "knubie/vim-kitty-navigator",
-    build = "cp ./*.py ~/.config/kitty/",
+    'knubie/vim-kitty-navigator',
+    build = '[ -d "~/.config/kitty/" ] && cp ./*.py ~/.config/kitty/',
+}
+```
+> [!NOTE]
+> This plugin uses the remote control socket feature of kitty and thus supports using 
+> [kitty over ssh](https://sw.kovidgoyal.net/kitty/kittens/ssh/) (given Neo/Vim
+> are installed on your remote machine).
+> This means that the remote machine may only have the standalone `kitten` 
+> binary installed and therefore not have a `~/.config/kitty` directory.
+> Therefore, we only want to copy the `get_layout.py` kitten if such a directory
+> exists (i.e. on your local machine where the full kitty software is running).
+> If you do not have Neo/Vim installed on your local machine and you have not
+> installed this plugin locally using the above method, you will have to manually 
+> add `get_layout.py` to your `~/.config/kitty` directory.
+
+> [!NOTE]
+> We suggest copying by regex for python files (`./*.py`) for 
+> legacy reasons and to support future kittens, but you are 
+> welcome to just copy `./get_layout.py` instead
+
+The `get_layout.py` kitten is used to check whether the current kitty tab is in `stack` layout mode so that it can prevent accidentally navigating to a hidden stack window.
+
+#### 2. Configure Neo/Vim to modify it's modify the window's environment variables on enter
+
+Kitty needs to be able to tell if the current window is running Neo/Vim or not in order 
+to decide whether to focus a neighboring kitty window or pass the key to Neo/Vim.
+
+To do so, we must tell Neo/Vim to set an environment variable upon enter and unset it 
+upon exit, then in step 3, we'll unmap the keys from kitty if this variable is set so 
+the plugin can handle the vim navigation.
+
+See the kitty [key-mapping documentation](https://sw.kovidgoyal.net/kitty/mapping/#conditional-mappings-depending-on-the-state-of-the-focused-window) for details.
+
+For Vim:
+```vim
+let &t_ti = &t_ti . "\033]1337;SetUserVar=in_vim=MQo\007"
+let &t_te = &t_te . "\033]1337;SetUserVar=in_vim\007"
+```
+
+For Neovim:
+```lua
+vim.api.nvim_create_autocmd({ 'VimEnter', 'VimResume' }, {
+  group = vim.api.nvim_create_augroup('KittySetVarVimEnter', { clear = true }),
+  callback = function()
+    io.stdout:write '\x1b]1337;SetUserVar=in_vim=MQo\007'
+  end,
+})
+
+vim.api.nvim_create_autocmd({ 'VimLeave', 'VimSuspend' }, {
+  group = vim.api.nvim_create_augroup('KittyUnsetVarVimLeave', { clear = true }),
+  callback = function()
+    io.stdout:write '\x1b]1337;SetUserVar=in_vim\007'
+  end,
+})
+```
+or if you're using [lazy.nvim](https://github.com/folke/lazy.nvim), you can add an `init` function to your plugin spec:
+```lua
+{
+  'knubie/vim-kitty-navigator',
+  build = '[ -d "~/.config/kitty" ] && cp ./*.py ~/.config/kitty',
+  init = function()
+    vim.api.nvim_create_autocmd({ 'VimEnter', 'VimResume' }, {
+      group = vim.api.nvim_create_augroup('KittySetVarVimEnter', { clear = true }),
+      callback = function()
+        io.stdout:write '\x1b]1337;SetUserVar=in_vim=MQo\007'
+      end,
+    })
+
+    vim.api.nvim_create_autocmd({ 'VimLeave', 'VimSuspend' }, {
+      group = vim.api.nvim_create_augroup('KittyUnsetVarVimLeave', { clear = true }),
+      callback = function()
+        io.stdout:write '\x1b]1337;SetUserVar=in_vim\007'
+      end,
+    })
+  end,
 }
 ```
 
-The `pass_keys.py` kitten is used to intercept keybindings defined in your kitty conf and "pass" them through to vim when it is focused. The `get_layout.py` kitten is used to check whether the current kitty tab is in `stack` layout mode so that it can prevent accidentally navigating to a hidden stack window.
-
-#### 2. Add this snippet to kitty.conf
+#### 3. Create the conditional key mappings in kitty.con
 
 Add the following to your `~/.config/kitty/kitty.conf` file:
 
 ```conf
-map ctrl+j kitten pass_keys.py bottom ctrl+j
-map ctrl+k kitten pass_keys.py top    ctrl+k
-map ctrl+h kitten pass_keys.py left   ctrl+h
-map ctrl+l kitten pass_keys.py right  ctrl+l
+map ctrl+h neighboring_window left
+map ctrl+j neighboring_window down
+map ctrl+k neighboring_window up
+map ctrl+l neighboring_window right
+map --when-focus-on var:in_vim ctrl+h
+map --when-focus-on var:in_vim ctrl+j
+map --when-focus-on var:in_vim ctrl+k
+map --when-focus-on var:in_vim ctrl+l
 ```
 
-By default `vim-kitty-navigator` uses the name of the current foreground process to detect when it is in a (neo)vim session or not. If that doesn't work, (or if you want to support applications other than vim) you can supply a [regular expression](https://docs.python.org/3/library/re.html#re.search) as a third optional argument to the `pass_keys.py` call in your `kitty.conf` file to match the process name.
+This conditionally unmaps the window switching key-presses from kitty if the 
+current window is running Neo/Vim.
 
-```conf
-map ctrl+j kitten pass_keys.py bottom ctrl+j "^.* - nvim$"
-map ctrl+k kitten pass_keys.py top    ctrl+k "^.* - nvim$"
-map ctrl+h kitten pass_keys.py left   ctrl+h "^.* - nvim$"
-map ctrl+l kitten pass_keys.py right  ctrl+l "^.* - nvim$"
-```
-
-#### 3. Make kitty listen to control messages
+#### 4. Make kitty listen to control messages
 
 Start kitty with the `listen-on` option so that vim can send commands to it.
 
-```
+```conf
 # For linux only:
 kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty
 
@@ -98,7 +166,7 @@ kitty -o allow_remote_control=yes --single-instance --listen-on unix:/tmp/mykitt
 or if you don't want to start kitty with above mentioned command,
 simply add below configuration in your `kitty.conf` file.
 
-```
+```conf
 # For linux only:
 allow_remote_control yes
 listen_on unix:@mykitty
@@ -107,6 +175,8 @@ listen_on unix:@mykitty
 allow_remote_control yes
 listen_on unix:/tmp/mykitty
 ```
+
+You can also set `allow_remote_control` to `socket` or `socket-only` for more security
 
 > [!TIP]
 > After updating kitty.conf, close kitty completely and restart. Kitty does not support enabling `allow_remote_control` on configuration reload.
@@ -128,12 +198,10 @@ let g:kitty_navigator_password = "my_vim_password"
 
 If you don't want the plugin to create any mappings, you can use the five
 provided functions to define your own custom maps. You will need to define
-custom mappings in your `~/.vimrc` as well as update the bindings in kitty to
-match.
+custom mappings in your Neo/Vim configuration as well as update the 
+bindings in kitty to match.
 
-#### Vim
-
-Add the following to your `~/.vimrc` to define your custom maps:
+For Vim:
 
 ```vim
 let g:kitty_navigator_no_mappings = 1
@@ -144,20 +212,56 @@ nnoremap <silent> {Up-Mapping} :KittyNavigateUp<cr>
 nnoremap <silent> {Right-Mapping} :KittyNavigateRight<cr>
 ```
 
+For Neovim:
+```lua
+vim.g.kitty_navigator_no_mappings = 1
+
+vim.keymap.set('n', '{Left-Mapping}', ':KittyNavigateLeft<CR>', { silent = true, desc = 'Kitty Navigate Left' },
+vim.keymap.set('n', '{Down-Mapping}', ':KittyNavigateDown<CR>', { silent = true, desc = 'Kitty Navigate Down' },
+vim.keymap.set('n', '{Up-Mapping}', ':KittyNavigateUp<CR>', { silent = true, desc = 'Kitty Navigate Up' },
+vim.keymap.set('n', '{Right-Mapping}', ':KittyNavigateRight<CR>', { silent = true, desc = 'Kitty Navigate Right' },
+```
+or if you're using [lazy.nvim](https://github.com/folke/lazy.nvim):
+```lua
+{
+  'knubie/vim-kitty-navigator',
+  build = '[ -d "~/.config/kitty" ] && cp ./*.py ~/.config/kitty',
+  init = function()
+    vim.g.kitty_navigator_no_mappings = 1
+    -- rest of you init function (shown above)
+  end,
+  keys = {
+    { '{Left-Mapping}', ':KittyNavigateLeft<CR>', desc = 'Kitty Navigate Left', silent = true },
+    { '{Down-Mapping}', ':KittyNavigateDown<CR>', desc = 'Kitty Navigate Down', silent = true },
+    { '{Up-Mapping}', ':KittyNavigateUp<CR>', desc = 'Kitty Navigate Up', silent = true },
+    { '{Right-Mapping}', ':KittyNavigateRight<CR>', desc = 'Kitty Navigate Right', silent = true },
+  },
+}
+```
+
 > [!NOTE]
-> Each instance of `{Left-Mapping}` or `{Down-Mapping}` must be replaced
-> in the above code with the desired mapping. Ie, the mapping for `<ctrl-h>` =>
-> Left would be created with `nnoremap <silent> <c-h> :KittyNavigateLeft<cr>`.
+> Replace `{*-Mapping}` in the above code with your desired mapping 
+> (e.g. the mapping for 'ALT+h' => 'Left' would be created with 
+> `nnoremap <silent> <A-h> :KittyNavigateLeft<cr>` in Vim).
+> You will also have to replace the mappings in your `kitty.conf` 
+> (e.g. `map alt+h neighboring_window left` and 
+> `map --when-focus-on var:in_vim ctrl+h`)
 
 ### Navigating In Stacked Layout
 
 By default `vim-kitty-navigator` prevents navigating to "hidden" windows while in
 stacked layout. This is to prevent accidentally switching to a window that is
 "hidden" behind the current window. The default behavior can be overridden by
-setting the `g:kitty_navigator_enable_stack_layout` variable to `1` in your `~/.vimrc`
+setting the `g:kitty_navigator_enable_stack_layout` variable to `1`:
 
+For Vim:
 ```vim
 let g:kitty_navigator_enable_stack_layout = 1
+```
+
+For Neovim:
+```lua
+vim.g.kitty_navigator_enable_stack_layout = 1
 ```
 
 > [!WARNING]

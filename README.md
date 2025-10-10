@@ -48,14 +48,14 @@ This can be done manually or with a post-update hook in your package manager:
 
 Using [vim-plug](https://github.com/junegunn/vim-plug)
 ```vim
-Plug 'knubie/vim-kitty-navigator', {'do': '[ -d "~/.config/kitty/" ] && cp ./*.py ~/.config/kitty/'}
+Plug 'knubie/vim-kitty-navigator', {'do': 'sh -c "[ -d "~/.config/kitty/" ] && cp ./*.py ~/.config/kitty/"'}
 ```
 
 Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
 {
     'knubie/vim-kitty-navigator',
-    build = '[ -d "~/.config/kitty/" ] && cp ./*.py ~/.config/kitty/',
+    build = 'sh -c "[ -d "~/.config/kitty/" ] && cp ./*.py ~/.config/kitty/"',
 }
 ```
 > [!NOTE]
@@ -114,7 +114,7 @@ or if you're using [lazy.nvim](https://github.com/folke/lazy.nvim), you can add 
 ```lua
 {
   'knubie/vim-kitty-navigator',
-  build = '[ -d "~/.config/kitty" ] && cp ./*.py ~/.config/kitty',
+  build = 'sh -c "[ -d "~/.config/kitty/" ] && cp ./*.py ~/.config/kitty/"',
   init = function()
     vim.api.nvim_create_autocmd({ 'VimEnter', 'VimResume' }, {
       group = vim.api.nvim_create_augroup('KittySetVarVimEnter', { clear = true }),
@@ -225,7 +225,7 @@ or if you're using [lazy.nvim](https://github.com/folke/lazy.nvim):
 ```lua
 {
   'knubie/vim-kitty-navigator',
-  build = '[ -d "~/.config/kitty" ] && cp ./*.py ~/.config/kitty',
+  build = 'sh -c "[ -d "~/.config/kitty/" ] && cp ./*.py ~/.config/kitty/"',
   init = function()
     vim.g.kitty_navigator_no_mappings = 1
     -- rest of you init function (shown above)

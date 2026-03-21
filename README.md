@@ -68,11 +68,11 @@ kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty
 kitty -o allow_remote_control=yes --single-instance --listen-on unix:/tmp/mykitty
 ```
 
-or if you don't want to start kitty with above mentioned command,
-simply add below configuration in your `kitty.conf` file.
-
 > [!TIP]
 > Mac users can learn more about command line options in kitty, from [this](https://sw.kovidgoyal.net/kitty/faq/#how-do-i-specify-command-line-options-for-kitty-on-macos) link.
+
+or if you don't want to start kitty with above mentioned command,
+simply add below configuration in your `kitty.conf` file.
 
 ```
 # For linux only:

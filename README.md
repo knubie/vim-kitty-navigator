@@ -39,29 +39,9 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ### Kitty
 
-To configure the kitty side of this customization there are three parts:
+To configure the kitty side of this customization there are two parts:
 
-#### 1. Add the `get_layout.py` kitten
-
-Move the `get_layout.py` kitten to the `~/.config/kitty/` directory.
-
-This can be done manually or with a post-update hook in your package manager:
-
-Using [vim-plug](https://github.com/junegunn/vim-plug)
-```vim
-Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
-```
-
-Using [lazy.nvim](https://github.com/folke/lazy.nvim)
-```lua
--- init.lua
-{
-    "knubie/vim-kitty-navigator",
-    build = "cp ./*.py ~/.config/kitty/",
-}
-```
-
-#### 2. Add this snippet to kitty.conf
+#### 1. Add this snippet to kitty.conf
 
 Add the following to your `~/.config/kitty/kitty.conf` file:
 
@@ -76,7 +56,7 @@ map --when-focus-on var:IS_VIM ctrl+k
 map --when-focus-on var:IS_VIM ctrl+l
 ```
 
-#### 3. Make kitty listen to control messages
+#### 2. Make kitty listen to control messages
 
 Start kitty with the `listen-on` option so that vim can send commands to it.
 

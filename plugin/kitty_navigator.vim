@@ -4,7 +4,9 @@
 if exists("g:loaded_kitty_navigator") || &cp || v:version < 700
   finish
 endif
+
 let g:loaded_kitty_navigator = 1
+let s:kitty_navigator_directory = expand('<sfile>:p:h:h')
 
 function! s:VimNavigate(direction)
   try
@@ -47,7 +49,7 @@ augroup kitty_navigator
 augroup END
 
 function! s:KittyIsInStackLayout()
-  let layout = s:KittyCommand('kitten get_layout.py')
+  let layout = s:KittyCommand('kitten ' .. s:kitty_navigator_directory .. '/get_layout.py')
   return layout =~ 'stack'
 endfunction
 

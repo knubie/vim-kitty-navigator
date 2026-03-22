@@ -49,7 +49,7 @@ let s:kitty_is_last_pane = 0
 augroup kitty_navigator
   au!
   autocmd WinEnter * let s:kitty_is_last_pane = 0
-  autocmd VimLeavePre * s:KittyCommand('set-user-vars IS_VIM=false')
+  autocmd VimLeavePre * call s:KittyCommand('set-user-vars IS_VIM=false')
 augroup END
 
 function! s:KittyIsInStackLayout()

@@ -50,10 +50,10 @@ map ctrl+h neighboring_window left
 map ctrl+j neighboring_window down
 map ctrl+k neighboring_window up
 map ctrl+l neighboring_window right
-map --when-focus-on var:IS_VIM ctrl+h
-map --when-focus-on var:IS_VIM ctrl+j
-map --when-focus-on var:IS_VIM ctrl+k
-map --when-focus-on var:IS_VIM ctrl+l
+map --when-focus-on var:IS_VIM=true ctrl+h
+map --when-focus-on var:IS_VIM=true ctrl+j
+map --when-focus-on var:IS_VIM=true ctrl+k
+map --when-focus-on var:IS_VIM=true ctrl+l
 ```
 
 #### 2. Make kitty listen to control messages

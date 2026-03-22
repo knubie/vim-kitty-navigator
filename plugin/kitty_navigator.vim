@@ -34,7 +34,11 @@ function! s:KittyCommand(args)
   if pw != ""
     call add(cmd, '--password=' . pw)
   endif
-  let cmd = cmd + split(a:args)
+  if has('nvim')
+    let cmd = cmd + split(a:args)
+  else
+    let cmd = join(cmd, ' ') . ' ' . a:args
+  endif
   return system(cmd)
 endfunction
 

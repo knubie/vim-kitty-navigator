@@ -39,7 +39,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ### Kitty
 
-To configure the kitty side of this customization there are two parts:
+To configure the kitty side of this customization there are three parts:
 
 #### 1. Add this snippet to kitty.conf
 
@@ -56,7 +56,27 @@ map --when-focus-on var:IS_VIM=true ctrl+k
 map --when-focus-on var:IS_VIM=true ctrl+l
 ```
 
-#### 2. Make kitty listen to control messages
+#### 2. Add the `get_layout.py` kitten
+
+Move the `get_layout.py` kitten to the `~/.config/kitty/` directory.
+
+This can be done manually or with a post-update hook in your package manager:
+
+Using [vim-plug](https://github.com/junegunn/vim-plug)
+```vim
+Plug 'knubie/vim-kitty-navigator', {'do': 'cp ./*.py ~/.config/kitty/'}
+```
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+```lua
+-- init.lua
+{
+    "knubie/vim-kitty-navigator",
+    build = "cp ./*.py ~/.config/kitty/",
+}
+```
+
+#### 3. Make kitty listen to control messages
 
 Start kitty with the `listen-on` option so that vim can send commands to it.
 
@@ -94,6 +114,12 @@ password, e.g.:
 ```vim
 let g:kitty_navigator_password = "my_vim_password"
 ```
+
+## How it works
+
+The keyboard shortcut mappings we set up in `kitty.conf` come in two sets. The first set enables split window navigation within kitty, and the second set *disables* those shortcuts when the `IS_VIM` user var is set to true. This essentially disables the mappings when we are inside of vim because the vim plugin sets `IS_VIM` to `true` when vim is opened, and sets it to `false` when it closes.
+
+Once inside of vim, the plugin sets up keybindings for navigating vim splits with the same key bindings we defined in `kitty.conf`. The plugin will then detect if there are no more splits to navigate to, and then forward the `neighboring_window` command to kitty using kitty's remote control feature.
 
 ## Configuration
 

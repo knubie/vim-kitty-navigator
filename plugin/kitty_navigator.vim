@@ -53,7 +53,8 @@ augroup kitty_navigator
 augroup END
 
 function! s:KittyIsInStackLayout()
-  let layout = s:KittyCommand('kitten ' .. s:kitty_navigator_directory .. '/get_layout.py')
+  let json_str = s:KittyCommand('ls --match id:' .. getenv("KITTY_WINDOW_ID"))
+  let layout = json_decode(json_str)[0].tabs[0].layout
   return layout =~ 'stack'
 endfunction
 

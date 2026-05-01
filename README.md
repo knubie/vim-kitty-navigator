@@ -97,7 +97,7 @@ let g:kitty_navigator_password = "my_vim_password"
 
 ## How it works
 
-The keyboard shortcut mappings we set up in `kitty.conf` come in two sets. The first set enables split window navigation within kitty, and the second set *disables* those shortcuts when the `IS_VIM` user var is set to true. This essentially disables the mappings when we are inside of vim because the vim plugin sets `IS_VIM` to `true` when vim is opened, and sets it to `false` when it closes.
+The keyboard shortcut mappings we set up in `kitty.conf` come in two sets. The first set enables split window navigation within kitty, and the second set *disables* those shortcuts when the `IS_VIM` user var is set to true. This essentially disables the mappings when we are inside of vim because the vim plugin sets `IS_VIM` to `true` when vim is opened or resumed, and sets it to `false` when it closes or is suspended.
 
 Once inside of vim, the plugin sets up keybindings for navigating vim splits with the same key bindings we defined in `kitty.conf`. The plugin will then detect if there are no more splits to navigate to, and then forward the `neighboring_window` command to kitty using kitty's remote control feature.
 

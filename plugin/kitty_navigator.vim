@@ -50,6 +50,12 @@ augroup kitty_navigator
   au!
   autocmd WinEnter * let s:kitty_is_last_pane = 0
   autocmd VimLeavePre * call s:KittyCommand('set-user-vars IS_VIM=false')
+  if exists('##VimSuspend')
+    autocmd VimSuspend * call s:KittyCommand('set-user-vars IS_VIM=false')
+  endif
+  if exists('##VimResume')
+    autocmd VimResume * call s:KittyCommand('set-user-vars IS_VIM=true')
+  endif
 augroup END
 
 function! s:KittyIsInStackLayout()
